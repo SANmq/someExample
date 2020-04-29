@@ -6,17 +6,19 @@
 
 @keyframes inifiteAnimate {
     0% {
-        transform: rotateX(45deg) rotateY(0deg);
+        transform: rotateX(25deg) rotateY(0deg);
     }
+
     100% {
-        transform: rotateX(45deg) rotateY(360deg);
+        transform: rotateX(25deg) rotateY(360deg);
     }
 }
 
-@keyframes inifinteRotate{
+@keyframes inifinteRotate {
     0% {
         transform: rotateY(0deg);
     }
+
     100% {
         transform: rotateY(360deg);
     }
@@ -25,12 +27,14 @@
 .album-3d .wrapper {
     width: 100px;
     height: 100px;
-    position: absolute;
+    position: relative;
     transform-style: preserve-3d;
-    left: 50%;
+    left: 300px;
+    top: 200px;
+    /* left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%);
-    animation: inifiteAnimate 4s infinite linear;
+    transform: translate(-50%, -50%); */
+    animation: inifiteAnimate 8s infinite linear;
 }
 
 .album-3d .wrapper .box {
@@ -59,51 +63,64 @@
     background-position: center;
     background-size: 100%;
     transition: all 2s;
-    opacity: 0.6;
+    opacity: 0.5;
     background-size: 100% 100%;
 }
 
+.album-3d .wrapper:hover .max .item {
+    opacity: 0.9;
+}
+
 .album-3d .wrapper .box .item:nth-child(1) {
-    background-image: url('../3d相册img/1.jpg');
+    background-image: url('../3d相册img/1.png');
     transform: translateZ(50px);
 }
+
 .album-3d .wrapper:hover .max .item:nth-child(1) {
     transform: translateZ(180px);
 }
+
 .album-3d .wrapper .box .item:nth-child(2) {
-    background-image: url('../3d相册img/2.jpg');
+    background-image: url('../3d相册img/5.jpg');
     transform: rotateY(90deg) translateZ(50px);
 }
+
 .album-3d .wrapper:hover .max .item:nth-child(2) {
     transform: rotateY(90deg) translateZ(180px);
 }
+
 .album-3d .wrapper .box .item:nth-child(3) {
-    background-image: url('../3d相册img/3.jpg');
+    background-image: url('../3d相册img/3.png');
     transform: rotateY(-90deg) translateZ(50px);
 }
+
 .album-3d .wrapper:hover .max .item:nth-child(3) {
     transform: rotateY(-90deg) translateZ(180px);
 }
+
 .album-3d .wrapper .box .item:nth-child(4) {
     background-image: url('../3d相册img/4.jpg');
     transform: rotateY(180deg) translateZ(50px);
 }
+
 .album-3d .wrapper:hover .max .item:nth-child(4) {
     transform: rotateY(180deg) translateZ(180px);
 }
+
 .album-3d .wrapper .box .item:nth-child(5) {
-    background-image: url('../3d相册img/5.jpg');
+    background-image: url('../3d相册img/2.jpeg');
     transform: rotateX(90deg) translateZ(50px);
 }
+
 .album-3d .wrapper:hover .max .item:nth-child(5) {
     transform: rotateX(90deg) translateZ(180px);
 }
+
 .album-3d .wrapper .box .item:nth-child(6) {
     background-image: url('../3d相册img/6.jpg');
     transform: rotatex(-90deg) translateZ(50px);
 }
+
 .album-3d .wrapper:hover .max .item:nth-child(6) {
     transform: rotateX(-90deg) translateZ(180px);
 }
-
-
