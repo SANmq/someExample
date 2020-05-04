@@ -140,14 +140,21 @@ a {
 }
 
 /* 重置文本框 */
-input,button{
+input,
+button {
     border: none;
     outline: none;
     outline-offset: 0;
 }
 
 /* 重置按钮 */
-button{
+button {
     background: initial;
     padding: 0;
+}
+
+.clearfix::after {
+    display: block;
+    content: "";
+    clear: both;
 }
