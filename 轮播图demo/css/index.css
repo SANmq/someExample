@@ -30,8 +30,8 @@ a {
 
 .diamond .img-player {
     position: absolute;
-    display: flex;
-    transition-duration: 0.3s;
+    /* display: flex; */
+    transition-duration: 1s;
     backface-visibility: hidden;
     left: 0px;
     opacity: 1;

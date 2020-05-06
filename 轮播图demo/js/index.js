@@ -13,16 +13,20 @@ LoopView.prototype = {
     },
 
     render: function () {
-        this.exhibition.style.width = this.width * (this.data.length + 1);
-        this.exhibition.style.height = this.height;
+        this.exhibition.style.width = this.width * (this.data.length + 2) + "px";
+        this.exhibition.style.height = this.height + "px";
+        this.exhibition.style.left = -this.width + "px";
         let contant1 = ""
         let contant2 = ""
-        for (let i = 0; i <= this.data.length; i++) {
-            if (i == this.data.length) {
+        for (let i = 0; i <= this.data.length + 1; i++) {
+            if (i == 0) {
+                contant1 += `<a href="" class="img"><img src=${this.data[this.data.length-1]} alt=""></a>\n`
+
+            } else if (i == this.data.length + 1) {
                 contant1 += `<a href="" class="img"><img src=${this.data[0]} alt=""></a>\n`
 
             } else {
-                contant1 += `<a href="" class="img"><img src=${this.data[i]} alt=""></a>\n`
+                contant1 += `<a href="" class="img"><img src=${this.data[i-1]} alt=""></a>\n`
                 contant2 += `<li><a href="javascript:void(0)"></a></li>`
             }
         }
@@ -36,7 +40,7 @@ LoopView.prototype = {
     },
 
     handle: function () {
-        this.autoMove();
+        // this.autoMove();
         this.handlemouseenter();
         this.handlemouseleave();
         this.handleclick();
@@ -45,7 +49,7 @@ LoopView.prototype = {
     handlemouseleave() {
         var self = this;
         this.ele.onmouseleave = function (e) {
-            self.no = self.autoMove();
+            // self.no = self.autoMove();
             self.leftButton.style.display = 'none';
             self.rightButton.style.display = 'none';
         }
@@ -53,44 +57,47 @@ LoopView.prototype = {
 
     handlemouseenter() {
         var self = this;
-        console.log(this.ele);
         this.ele.onmouseenter = function (e) {
             self.leftButton.style.display = 'block';
             self.rightButton.style.display = 'block';
-            clearInterval(self.no);
+            // clearInterval(self.no);
         }
     },
 
     handleclick() {
         var self = this;
         document.onclick = function (e) {
-            console.log(e.target);
             if (e.target == self.leftButton) {
-                clearInterval(self.no);
-                self.indexChange(-1);
+                // clearInterval(self.no);
+                self.nextMove();
             }
             if (e.target == self.rightButton) {
-                clearInterval(self.no);
-                self.indexChange(1);
+                // clearInterval(self.no);
+                self.beforeMove();
             }
             for (let i = 0; i < self.data.length; i++) {
                 if (e.target == self.button[i].childNodes[0]) {
-                    clearInterval(self.no);
+                    // clearInterval(self.no);
+                    this.exhibition.style.left = -this.width * (1 + i) + "px";
                     self.index = i;
                 }
             }
         }
     },
 
-    // 改变index的方法
-    indexChange(step) {
-        // 用于按指定方向更新一步步长的方法
-        if (this.index + step > this.data.length) {
+    beforeMove() {
+        this.exhibition.style.left = parseInt(this.exhibition.style.left) - this.width + "px";
+        if (parseInt(this.exhibition.style.left) == 0) {
+            this.index = 4;
+        }
+
+    },
+
+    nextMove() {
+        // 向后移动一位
+        this.exhibition.style.left = parseInt(this.exhibition.style.left) + this.width + "px";
+        if (parseInt(this.exhibition.style.left) == this.width * (this.data.length + 1)) {
             this.index = 0;
-        } else if (this.index + step < 0) {
-            this.index = this.data.length - 1;
-        } else {
-            this.index += step;
         }
     },
 
@@ -98,19 +105,14 @@ LoopView.prototype = {
         // 用来时时刷新轮播图位置的函数
         var self = this
         this.auto = setInterval(function () {
-            console.log(self.index)
-            let x = -1 * self.index * self.width + 'px'
-            self.exhibition.style.transform = `translate3d(${x}, 0px, 0px)`;
-            // self.exhibition.style.backfacevisibility = "hidden";
-            console.log(self.index);
-            if (self.index == self.data.length) {
-                self.index = 0;
-                // self.exhibition.style.transform = `translate3d(${x}, 0px, 0px)`;
+            if (parseInt(self.exhibition.style.left) == 0) {
+                console.log("左边超出归为");
+                self.exhibition.style.left = -self.width * self.data.length + "px";
+            } else if (parseInt(self.exhibition.style.left) == -self.width * (self.data.length + 1)) {
+                self.exhibition.style.left = -self.width + "px";
+                console.log("右边超出归为");
             }
-            for (let i in self.button) {
-                self.button[i].className = i == self.index ? 'select' : "";
-            }
-        }, 40)
+        }, 10)
     },
 
     autoMove() {
