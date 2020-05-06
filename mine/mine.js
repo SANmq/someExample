@@ -186,8 +186,10 @@ Mine.prototype = {
                 this.cell[i].ele.className = "boo";
                 this.cell[i].ele.innerText = "X"
             }
+            console.log("我失败了")
         }
-        alert("游戏失败");
+        setTimeout('alert("游戏失败")',10)
+        // alert("游戏失败");
     },
     // 游戏成功事件
     gameWin() {

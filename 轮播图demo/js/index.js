@@ -82,9 +82,10 @@ LoopView.prototype = {
         }
     },
 
+    // 改变index的方法
     indexChange(step) {
         // 用于按指定方向更新一步步长的方法
-        if (this.index + step > this.data.length - 1) {
+        if (this.index + step > this.data.length) {
             this.index = 0;
         } else if (this.index + step < 0) {
             this.index = this.data.length - 1;
@@ -97,14 +98,19 @@ LoopView.prototype = {
         // 用来时时刷新轮播图位置的函数
         var self = this
         this.auto = setInterval(function () {
+            console.log(self.index)
             let x = -1 * self.index * self.width + 'px'
             self.exhibition.style.transform = `translate3d(${x}, 0px, 0px)`;
-            self.exhibition.style.backfacevisibility = "hidden";
-            // self.console.log("jixu?")
+            // self.exhibition.style.backfacevisibility = "hidden";
+            console.log(self.index);
+            if (self.index == self.data.length) {
+                self.index = 0;
+                // self.exhibition.style.transform = `translate3d(${x}, 0px, 0px)`;
+            }
             for (let i in self.button) {
                 self.button[i].className = i == self.index ? 'select' : "";
             }
-        }, 5)
+        }, 40)
     },
 
     autoMove() {
