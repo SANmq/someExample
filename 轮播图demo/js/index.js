@@ -8,26 +8,25 @@ LoopView.prototype = {
     },
 
     initData: function () {
-        //  初始数据的启动及赋值
-        this.index = 0;
-        this.no1;
-        this.no2;
-
-
+        //  初始化图片位置，
+        this.index = 1;
+        // 初始化展布宽高
+        this.exhibition.style.width = this.width * (this.length + 2) + "px";
+        this.exhibition.style.height = this.height + "px";
+        // 初始化展布位置
+        this.exhibition.style.left = -this.width * this.index + "px";
 
     },
 
     render: function () {
-        this.exhibition.style.width = this.width * (this.data.length + 2) + "px";
-        this.exhibition.style.height = this.height + "px";
-        this.exhibition.style.left = -this.width + "px";
+        // 产生临时插入值
         let contant1 = ""
         let contant2 = ""
-        for (let i = 0; i <= this.data.length + 1; i++) {
+        for (let i = 0; i <= this.length + 1; i++) {
             if (i == 0) {
                 contant1 += `<a href="" class="img"><img src=${this.data[this.data.length - 1]} alt=""></a>\n`
 
-            } else if (i == this.data.length + 1) {
+            } else if (i == this.length + 1) {
                 contant1 += `<a href="" class="img"><img src=${this.data[0]} alt=""></a>\n`
 
             } else {
@@ -37,48 +36,81 @@ LoopView.prototype = {
         }
         this.exhibition.innerHTML = contant1;
         this.controlBar.innerHTML = contant2;
-        // 渲染小按钮
+        // 更新小圆点的位置
         this.button = this.controlBar.childNodes;
-        this.button[this.index].className = 'select';
+        // this.button[this.index - 1].className = 'select';
+        this.bindpoint();
     },
 
+    // 更新小圆点的位置
     bindpoint() {
-
+        for (let i = 0; i < this.length; i++) {
+            if (i == this.index - 1) {
+                this.button[i].className = 'select';
+            } else {
+                this.button[i].className = '';
+            }
+        }
     },
 
     move(dis) {
-        //设置每一移动一小步
-        let self = this;
-        var allTime = 400;
-        var eachTime = 10;
-        var eachDis = dis / (allTime / eachTime);
-        var newDis = parseInt(self.exhibition.style.left) + dis;
-        // flag = false;
-        // clearInterval(self.no1);
-        function eachMove() {
-            if (dis < 0 && parseInt(self.exhibition.style.left) > newDis || dis > 0 && parseInt(self.exhibition.style.left) < newDis) {
-                self.exhibition.style.left = parseInt(self.exhibition.style.left) + eachDis + 'px';
-            } else {
-                flag = true;
-                clearInterval(self.no1);
-                self.exhibition.style.left = newDis + 'px';
-                //设置无限滚动
-                console.log(newDis)
-                if (newDis == 0) {
-                    self.exhibition.style.left = -self.width * self.data.length + 'px';
-                }
-                if (newDis == -(self.width * (self.data.length + 1))) {
-                    self.exhibition.style.left = -self.width + 'px';
-                }
+        // 每次移动前先更新index的位置
+        // if (this.index - dis / this.width < 1) {
+        //     this.index = this.length;
+        // } else if (this.index - dis / this.width > this.length) {
+        //     this.index = 1;
+        // } else {
+        //     this.index -= dis / this.width;
+        // }
+        // this.bindpoint();
 
-            }
-        }
-        self.no1 = setInterval(eachMove, 10);
+        // 移动一次的动画时间
+        let time = 0.1;
+        // 移动一次的步长
+        let step = dis * 0.1;
+        let self = this;
+        let pos = parseInt(self.exhibition.style.left)
+
+        this.no1 = setInterval(function () {
+            self.exhibition.style.left += step
+        }, 10);
+
+
+
+
+
+
+        // let self = this;
+        // var allTime = 400;
+        // var eachTime = 10;
+        // var eachDis = dis / (allTime / eachTime);
+        // var newDis = parseInt(self.exhibition.style.left) + dis;
+        // // flag = false;
+        // // clearInterval(self.no1);
+        // function eachMove() {
+        //     if (dis < 0 && parseInt(self.exhibition.style.left) > newDis || dis > 0 && parseInt(self.exhibition.style.left) < newDis) {
+        //         self.exhibition.style.left = parseInt(self.exhibition.style.left) + eachDis + 'px';
+        //     } else {
+        //         flag = true;
+        //         clearInterval(self.no1);
+        //         self.exhibition.style.left = newDis + 'px';
+        //         //设置无限滚动
+        //         console.log(newDis)
+        //         if (newDis == 0) {
+        //             self.exhibition.style.left = -self.width * self.data.length + 'px';
+        //         }
+        //         if (newDis == -(self.width * (self.data.length + 1))) {
+        //             self.exhibition.style.left = -self.width + 'px';
+        //         }
+
+        //     }
+        // }
+        // self.no1 = setInterval(eachMove, 10);
     },
 
     handle: function () {
-        this.handlemouseenter();
-        this.handlemouseleave();
+        // this.handlemouseenter();
+        // this.handlemouseleave();
         this.handleclick();
     },
 
@@ -100,26 +132,26 @@ LoopView.prototype = {
 
     handleclick() {
         var self = this;
-        self.leftButton.onclick = function(){
-            self.move(self.width)
-            self.index = self.index == 0 ? self.data.length : self.index - 1;
-        }
+        this.leftButton.onclick = function () {
 
-        document.onclick = function (e) {
-            if (e.target == self.rightButton) {
-                self.move(-self.width)
-                self.index = self.index == self.data.length ? 0 : self.index + 1;
-            }
-            for (let i = 0; i < self.data.length; i++) {
-                if (e.target == self.button[i].childNodes[0]) {
-                    self.move(self.width * (self.index - i))
-                    self.index = i;
+        };
+
+        this.rightButton.onclick = function () {
+
+        };
+
+        for (let i = 0; i < this.length; i++) {
+            self.button[i].onclick = (function (j) {
+                return function () {
+                    self.index = j + 1;
+                    self.bindpoint();
                 }
-            }
+            }(i))
         }
-    },
-
+    }
 }
+
+
 
 function LoopView(ele, width, height, speed, data, leftButton, rightButton, controlBar) {
     this.ele = ele || document.getElementById("loopview");
@@ -131,6 +163,7 @@ function LoopView(ele, width, height, speed, data, leftButton, rightButton, cont
     this.height = height || 280;
     this.speed = speed || 2000;
     this.data = data || ["img/img1.webp", "img/img2.jpg", "img/img3.jpg", "img/img4.jpg", "img/img5.webp"];
+    this.length = this.data.length
     this.init();
 }
 
