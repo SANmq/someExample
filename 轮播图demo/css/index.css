@@ -106,7 +106,7 @@ a {
     color: white;
     font-weight: 500;
     line-height: 30px;
-    /* display: none; */
+    display: none;
 }
 
 .diamond .select-right {
@@ -124,5 +124,12 @@ a {
     color: white;
     font-weight: 500;
     line-height: 30px;
-    /* display: none; */
+    display: none;
+}
+
+.diamond:hover .select-left{
+    display: block;
+}
+.diamond:hover .select-right{
+    display: block;
 }

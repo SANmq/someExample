@@ -4,7 +4,8 @@ LoopView.prototype = {
         // 定义初始的展示位置大小,没有填充默认大小
         this.initData();
         this.render();
-        this.move(-1040)
+        this.handle();
+        this.timer2 = setInterval(self.rightButton.onclick, self.speed);
     },
 
     initData: function () {
@@ -31,13 +32,76 @@ LoopView.prototype = {
     },
 
     handle() {
+        this.handleclick();
+        this.handlemouse();
+    },
+
+    handleclick() {
+        self = this;
+        this.leftButton.onclick = function () {
+            if (!self.flag) {
+                return
+            } else {
+                self.move(self.width);
+            }
+        }
+        this.rightButton.onclick = function () {
+            if (!self.flag) {
+                return
+            } else {
+                self.move(-self.width);
+            }
+        }
+
+        for (let i = 0; i < this.length; i++) {
+            this.button[i].onclick = (function (j) {
+                return function () {
+                    if (self.flag) {
+                        self.index = j + 1;
+                        self.nextDis = -self.width * self.index;
+                        self.move(self.nextDis - self.nowDis);
+                    }
+                }
+            }(i))
+        }
 
     },
+
+    handlemouse() {
+        self = this;
+        this.exhibition.onmouseenter = function () {
+            clearInterval(self.timer2);
+        }
+        this.exhibition.onmouseout = function () {
+            self.timer2 = setInterval(self.rightButton.onclick, self.speed)
+        }
+    },
+
+
+    circle() {
+        for (let i = 0; i < this.length; i++) {
+            if (this.index == i + 1) {
+                this.button[i].className = "select"
+            } else {
+                this.button[i].className = null;
+            }
+        }
+    },
+
     move(dis) {
         this.nextDis = this.nowDis + dis;
         this.step = parseInt(dis / 40) + 1;
         self = this;
         this.flag = false;
+        let nextindex = -self.nextDis / self.width
+        if (nextindex < 1) {
+            this.index = this.length;
+        } else if (nextindex > this.length) {
+            this.index = 1;
+        } else {
+            this.index = nextindex;
+        }
+        this.circle();
         this.timer1 = setInterval(function () {
             if (Math.abs(self.nextDis - self.nowDis) > Math.abs(self.nextDis - self.nowDis - self.step)) {
                 self.nowDis = self.nowDis + self.step;
@@ -57,8 +121,6 @@ LoopView.prototype = {
                 self.flag = true;
             }
         }, 10)
-
-
     },
 
     // 初始化渲染页面方法
