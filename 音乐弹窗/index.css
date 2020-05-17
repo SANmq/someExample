@@ -1,0 +1,37 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+@keyframes move {
+    0% {
+        transform: translate(-200px, 100px);
+    }
+
+    100% {
+        transform: translate(0, 100px);
+    }
+}
+
+.musicbar {
+    position: fixed;
+    width: 220px;
+    height: 40px;
+    background-color: red;
+    transform: translate(-200px, 100px);
+    cursor: pointer;
+    transition: all 1s;
+}
+
+.musicbar .sidebtn {
+    position: absolute;
+    width: 200px;
+    height: 40px;
+    background-color: yellow;
+}
+
+.musicbar:hover {
+    animation: move 1s cubic-bezier(0, 0, 0.14, 0.97);
+    transform: translate(0px, 100px);
+
+}
