@@ -1,31 +1,51 @@
-
-
-Move.prototype = {
-    // 匀加速运动
-    smooth: function (a) {
-        self = this;
-        this.dom.timer = null
-        clearInterval(this.dom.timer);
-        setInterval(function () {
-            for (attr in this.target) {
-                if (attr === "opacity") {
-                } else {
-                    self.dom.style[attr] = parseInt(self.dom.style[attr]) + sel
-                }
-            }
-
-        }, 10)
-
-
-
-
+// 获取元素样式兼容版
+function getStyle(dom, sttr) {
+    if (window.getComputedStyle) {
+        return window.getComputedStyle(dom, null)[sttr];
+    } else {
+        return dom.currentStyle[sttr]
     }
-
 }
 
-function Move(dom, target, speed) {
-    this.dom = dom;
-    this.target = target;
-    // 移动物体的初始速度
-    this.speed = speed || 0
+// 缓冲运动
+function moveStart(dom, target) {
+    // 用时多久停到目标位置
+    clearInterval(dom.timer);
+    let icur = null,
+        ispeed = null;
+    dom.timer = setInterval(function () {
+        let flag = true;
+        for (let sttr in target) {
+            if (sttr === "opacity") {
+                icur = parseInt(getStyle(dom, sttr) * 100);
+                console.log(icur)
+            } else {
+                icur = parseInt(getStyle(dom, sttr))
+            }
+            ispeed = (target[sttr] - icur) / 7;
+            ispeed = ispeed > 0 ? Math.ceil(ispeed) : Math.floor(ispeed);
+            if (sttr === "opacity") {
+                dom.style[sttr] = (icur + ispeed) / 100;
+                console.log(icur)
+            } else {
+                dom.style[sttr] = icur + ispeed + 'px';
+            }
+            if (icur !== target[sttr]) {
+                flag = false;
+            }
+        }
+        if (flag) {
+            clearInterval(dom.timer);
+        }
+    }, 30)
+}
+
+var btn = document.getElementById('btn');
+var target = {
+    left: 500,
+    width: 400,
+    opacity: 100,
+}
+btn.onclick = function () {
+    moveStart(this, target)
 }
