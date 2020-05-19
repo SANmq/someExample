@@ -40,6 +40,20 @@ function moveStart(dom, target) {
     }, 30)
 }
 
+// 弹性运动
+function moveSpring(dom, target) {
+    clearInterval(dom.timer);
+
+    
+
+    dom.timer = setInterval(function () {
+
+
+
+    }, 30)
+}
+
+
 var btn = document.getElementById('btn');
 var target = {
     left: 500,
