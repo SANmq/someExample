@@ -88,14 +88,55 @@ var btn = document.getElementById('btn');
 var axis = {
     x: 400,
     y: 50,
-    // z: 100,
 }
 
 var v0 = {
-    x: 0,
+    x: 60,
     y: 0
 }
 
 btn.onclick = function () {
-    moveSpring(this, axis, v0, 0.1, 1)
+    moveByG(this, v0, 3, true, 0.8)
+}
+
+function moveByG(dom, v0, g, rebound, eLost) {
+    // 物体仅受重力作用,rebound确定物体是否反弹,eLost反弹后的能量损
+    clearInterval(dom.timer);
+    let iSpeedX = v0.x,
+        iSpeedY = v0.y,
+        height = parseInt(getStyle(dom, "height")),
+        width = parseInt(getStyle(dom, "width"));
+    dom.timer = setInterval(function () {
+        let icurX = parseInt(dom.offsetLeft),
+            icurY = parseInt(dom.offsetTop);
+        iSpeedY += g;
+        let nowX = icurX + iSpeedX,
+            nowY = icurY + iSpeedY;
+        if (rebound) {
+            // 执行反弹
+            if (nowY + height >= document.documentElement.clientHeight || nowY <= 0) {
+                iSpeedY *= -1;
+                nowY = nowY <= 0 ? 0 : document.documentElement.clientHeight - height;
+                if (eLost) {
+                    iSpeedY *= eLost;
+                    iSpeedX *= eLost;
+                }
+            }
+            if (nowX + width >= document.documentElement.clientWidth || nowX <= 0) {
+                iSpeedX *= -1;
+                nowX = nowX <= 0 ? 0 : document.documentElement.clientWidth - width;
+                if (eLost) {
+                    iSpeedY *= eLost;
+                    iSpeedX *= eLost;
+                }
+            }
+        }
+        // if (nowY + height == document.documentElement.clientHeight && iSpeedX) {
+
+        // }
+        dom.style.left = nowX + 'px';
+        dom.style.top = nowY + 'px';
+        console.log(iSpeedY)
+        console.log(iSpeedX)
+    }, 30)
 }
