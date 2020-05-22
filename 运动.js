@@ -139,21 +139,73 @@ var axis = {
 }
 
 var v0 = {
-    x: 60,
-    y: 0
+    x: 200,
+    y: 20
+}
+
+var a0 = {
+    x: -1,
+    y: 3
 }
 
 btn.onclick = function () {
-    move(this, v0, 3, true, 0.8)
+    move(this, null, v0, a0, 0.8)
 }
 
-function move(ele, boder, v0, a, lost, isKnock) {
+function move(ele, boder, v0, a, lost) {
     // ele运动元素，
-    // boder 运动区域（填元素，默认元素padding区域），如果元素相对视口定位，则添加无效
-    // v0 运动初速度 a运动加速度
+    // boder 运动区域（填元素，默认元素boder区域），如果元素相对视口定位，则添加无效
+    // v0 运动初速度 
+    // a运动加速度
     // lost 碰撞后的速度损失
-    // isKnock 是否发生碰撞行为，如果boder设置或元素定位相对视口,则默认发生碰撞行为
+    // 清除定时器
+    clearInterval(ele.timer);
+    let vx = v0.x,
+        vy = v0.y,
+        bwidth,
+        bheight;
+    if (boder) {
+        // 这种情况有边界
+        bwidth = boder.clientWidth;
+        bheight = boder.clientHeight;
+    } else {
+        bwidth = document.documentElement.clientWidth;
+        bheight = document.documentElement.clientHeight;
+    }
+    xCur = parseInt(getStyle(ele, "left"));
+    yCur = parseInt(getStyle(ele, "top"));
 
+    ele.timer = setInterval(function () {
+        vx += a.x;
+        vy += a.y;
+        xCur += vx;
+        yCur += vy;
+        // 可以考虑改用其他样式代表运动物体的大小
+        if (xCur <= 0 || xCur + parseInt(getStyle(ele, "width")) >= bwidth) {
+            vx *= -1
+            if (lost) {
+                vx *= lost;
+                vy *= lost;
+            }
+            xCur = xCur <= 0 ? 0 : bwidth - parseInt(getStyle(ele, "width"));
+        }
+        console.log(yCur + parseInt(getStyle(ele, "height")) >= bheight)
+        if (yCur <= 0 || yCur + parseInt(getStyle(ele, "height")) >= bheight) {
+            console.log(vy)
+            vy *= -1
+            if (lost) {
+                vx *= lost;
+                vy *= lost;
+            }
+            yCur = yCur <= 0 ? 0 : bheight - parseInt(getStyle(ele, "height"));
+        }
 
+        if (ele.style.left == xCur + "px" && ele.style.top == yCur + "px") {
+            clearInterval(ele.timer);
+        } else {
+            ele.style.left = xCur + 'px';
+            ele.style.top = yCur + 'px';
+        }
+    }, 30)
 
 }
