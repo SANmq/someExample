@@ -18,7 +18,7 @@ function moveStart(dom, target) {
         for (let sttr in target) {
             if (sttr === "opacity") {
                 icur = parseInt(getStyle(dom, sttr) * 100);
-                console.log(icur)
+
             } else {
                 icur = parseInt(getStyle(dom, sttr))
             }
@@ -26,7 +26,6 @@ function moveStart(dom, target) {
             ispeed = ispeed > 0 ? Math.ceil(ispeed) : Math.floor(ispeed);
             if (sttr === "opacity") {
                 dom.style[sttr] = (icur + ispeed) / 100;
-                console.log(icur)
             } else {
                 dom.style[sttr] = icur + ispeed + 'px';
             }
@@ -78,79 +77,30 @@ function moveSpring(dom, axis, v0, k, f) {
         }
         dom.style.left = nowX - centerX + 'px';
         dom.style.top = nowY - centerY + 'px';
-
-
-    }, 30)
-}
-
-
-function moveByG(dom, v0, g, rebound, eLost, boder) {
-    // 物体仅受重力作用,rebound确定物体是否反弹,eLost反弹后的能量损,boder 如果元素为非窗口定位元素，且设置此值，
-    // 则元素移动范围不会超出该元素所示区域
-    clearInterval(dom.timer);
-    let iSpeedX = v0.x,
-        iSpeedY = v0.y;
-
-    dom.timer = setInterval(function () {
-
-        let height = dom.clientHeight,
-            width = dom.clientWidth,
-            icurX = parseInt(dom.offsetLeft),
-            icurY = parseInt(dom.offsetTop);
-        console.log(height, width)
-        iSpeedY += g;
-        let nowX = icurX + iSpeedX,
-            nowY = icurY + iSpeedY;
-        if (rebound) {
-            // 执行反弹
-            if (nowY + height >= document.documentElement.clientHeight || nowY <= 0) {
-                iSpeedY *= -1;
-                nowY = nowY <= 0 ? 0 : document.documentElement.clientHeight - height;
-                if (eLost) {
-                    iSpeedY *= eLost;
-                    iSpeedX *= eLost;
-                }
-            }
-            if (nowX + width >= document.documentElement.clientWidth || nowX <= 0) {
-                iSpeedX *= -1;
-                nowX = nowX <= 0 ? 0 : document.documentElement.clientWidth - width;
-                if (eLost) {
-                    iSpeedY *= eLost;
-                    iSpeedX *= eLost;
-                }
-                console.log()
-            }
-        }
-        if (nowY + height == document.documentElement.clientHeight && Math.abs(iSpeedX) <= 1 && Math.abs(iSpeedY) <= 1 + g / (eLost + 1)) {
-            // console.log(iSpeedY)
-            clearInterval(dom.timer)
-        } else {
-            dom.style.left = nowX + 'px';
-            dom.style.top = nowY + 'px';
-        }
     }, 30)
 }
 
 
 var btn = document.getElementById('btn');
+var long = document.getElementsByTagName("div")[0];
 var axis = {
     x: 400,
     y: 50,
 }
 
 var v0 = {
-    x: 200,
+    x: 100,
     y: 20
 }
 
 var a0 = {
-    x: -1,
+    x: 0,
     y: 3
 }
 
-btn.onclick = function () {
-    move(this, null, v0, a0, 0.8)
-}
+// btn.onclick = function () {
+//     move(this, long, v0, a0, 0.8)
+// }
 
 function move(ele, boder, v0, a, lost) {
     // ele运动元素，
@@ -189,9 +139,7 @@ function move(ele, boder, v0, a, lost) {
             }
             xCur = xCur <= 0 ? 0 : bwidth - parseInt(getStyle(ele, "width"));
         }
-        console.log(yCur + parseInt(getStyle(ele, "height")) >= bheight)
         if (yCur <= 0 || yCur + parseInt(getStyle(ele, "height")) >= bheight) {
-            console.log(vy)
             vy *= -1
             if (lost) {
                 vx *= lost;
@@ -208,4 +156,54 @@ function move(ele, boder, v0, a, lost) {
         }
     }, 30)
 
+}
+// 拖拽运动
+
+
+btn.onmousedown = function (e) {
+    console.log("12345")
+    clearInterval(this.timer)
+    // 如果有父级定位显示元素
+    if (this.offsetParent) {
+        boder = this.offsetParent;
+    } else {
+        boder = document.documentElement;
+    }
+    let ax = e.clientX - this.offsetLeft - boder.offsetLeft;
+    let ay = e.clientY - this.offsetTop - boder.offsetTop;
+    self = this;
+    let lastleft = parseInt(getStyle(this, "left")),
+        lasttop = parseInt(getStyle(this, "top"));
+
+    boder.onmousemove = function (e) {
+        let left = e.clientX - ax - boder.offsetLeft,
+            top = e.clientY - ay - boder.offsetTop;
+        if (left <= 0 || left >= boder.clientWidth - self.clientWidth) {
+            left = left <= 0 ? 0 : boder.clientWidth - self.clientWidth;
+        }
+        if (top <= 0 || top >= boder.clientHeight - self.clientHeight) {
+            top = top <= 0 ? 0 : boder.clientHeight - self.clientHeight
+        }
+        lastleft = parseInt(self.style.left)
+        lasttop = parseInt(self.style.top)
+        console.log(left, top)
+        self.style.left = left + 'px';
+        self.style.top = top + 'px';
+        document.onmouseup = function (e) {
+            boder.onmousemove = null;
+            let v0 = {
+                    x: left - lastleft,
+                    y: top - lasttop
+                },
+                a = {
+                    x: 0,
+                    y: 3
+                }
+            move(btn, boder, v0, a, 0.8)
+            document.onmouseup = null;
+        }
+    }
+    document.onmouseup = function (e) {
+        boder.onmousemove = null;
+    }
 }
