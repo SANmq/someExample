@@ -234,12 +234,81 @@
                     2.不能使用原生的getElementsByClassName方法
                 </p>
                 <script>
-                    function getDom(str){
-                        var a = document.getRootNode()
-                        console.log(a)
+                    function getDom(str) {
+                        if (str) {
+                            let elements = [];
+                            for (let i = 0; i < document.body.children.length; i++) {
+                                elements.push(document.body.children[i])
+                            }
+                            let target = [];
+                            while (elements.length) {
+                                let ele = elements.shift()
+                                if (ele.children.length) {
+                                    elements.push(ele.children);
+                                };
+                                if (/^\./.test(str)) {
+                                    if (ele.className) {
+                                        let temp = ele.className.trim().replace(/\s+/g, " ").split(" ");
+                                        for (let j = 0; j < temp.length; j++) {
+                                            if (temp[j] === str.replace(".", "")) {
+                                                target.push(ele);
+                                            }
+                                        }
+                                    }
+                                } else if (/^#/.test(str)) {
+                                    if (ele.id === str.replace("#", "")) {
+                                        return ele;
+                                    }
+                                } else if (/^[A-z]/.test(str)) {
+                                    if (ele.tagName == str.toUpperCase()) {
+                                        target.push(ele);
+                                    }
+                                }
+                            }
+                            return target
+                        } else {
+                            return null;
+                        }
                     }
-                    getDom()
                 </script>
+                <pre>
+                    function getDom(str) {
+                        if (str) {
+                            let elements = [];
+                            for (let i = 0; i < document.body.children.length; i++) {
+                                elements.push(document.body.children[i])
+                            }
+                            let target = [];
+                            while (elements.length) {
+                                let ele = elements.shift()
+                                if (ele.children.length) {
+                                    elements.push(ele.children);
+                                };
+                                if (/^\./.test(str)) {
+                                    if (ele.className) {
+                                        let temp = ele.className.trim().replace(/\s+/g, " ").split(" ");
+                                        for (let j = 0; j < temp.length; j++) {
+                                            if (temp[j] === str.replace(".", "")) {
+                                                target.push(ele);
+                                            }
+                                        }
+                                    }
+                                } else if (/^#/.test(str)) {
+                                    if (ele.id === str.replace("#", "")) {
+                                        return ele;
+                                    }
+                                } else if (/^[A-z]/.test(str)) {
+                                    if (ele.tagName == str.toUpperCase()) {
+                                        target.push(ele);
+                                    }
+                                }
+                            }
+                            return target
+                        } else {
+                            return null;
+                        }
+                    }
+                </pre>
             </li>
             <li>
                 <p>请尝试写出缓冲运动的效果。</p>
