@@ -144,7 +144,7 @@
                 <p>Label标签通过<u>&nbsp;for&nbsp;</u>属性和其他标签进行关联。</p>
             </li>
             <li>
-                <p>数组ForEach和普通的for循环哪个遍历效率更高<u>&nbsp;ForEach&nbsp;</u>。</p>
+                <p>数组ForEach和普通的for循环哪个遍历效率更高<u>&nbsp;for&nbsp;</u>。</p>
             </li>
             <li>
                 <p>
@@ -233,44 +233,6 @@
                     注：1.'#id'此参数为根据id名称选择dom，.Class此参数为根据类名选择dom，'tag'此参数为根据标签名称获取dom。
                     2.不能使用原生的getElementsByClassName方法
                 </p>
-                <script>
-                    function getDom(str) {
-                        if (str) {
-                            let elements = [];
-                            for (let i = 0; i < document.body.children.length; i++) {
-                                elements.push(document.body.children[i])
-                            }
-                            let target = [];
-                            while (elements.length) {
-                                let ele = elements.shift()
-                                if (ele.children.length) {
-                                    elements.push(ele.children);
-                                };
-                                if (/^\./.test(str)) {
-                                    if (ele.className) {
-                                        let temp = ele.className.trim().replace(/\s+/g, " ").split(" ");
-                                        for (let j = 0; j < temp.length; j++) {
-                                            if (temp[j] === str.replace(".", "")) {
-                                                target.push(ele);
-                                            }
-                                        }
-                                    }
-                                } else if (/^#/.test(str)) {
-                                    if (ele.id === str.replace("#", "")) {
-                                        return ele;
-                                    }
-                                } else if (/^[A-z]/.test(str)) {
-                                    if (ele.tagName == str.toUpperCase()) {
-                                        target.push(ele);
-                                    }
-                                }
-                            }
-                            return target
-                        } else {
-                            return null;
-                        }
-                    }
-                </script>
                 <pre>
                     function getDom(str) {
                         if (str) {
@@ -312,12 +274,97 @@
             </li>
             <li>
                 <p>请尝试写出缓冲运动的效果。</p>
+                <div id="ground" style="width: 800px;height: 200px;background-color: burlywood;position: relative;">
+
+                    <div class="obj"
+                        style="width: 100px;height: 100px;background-color: black;
+                    position: absolute;color: white;text-align: center;line-height: 100px;user-select: none;cursor: pointer;">点击
+                    </div>
+                </div>
             </li>
             <li>
                 <p>请用伪代码（用中文分步描述逻辑）写出轮播图的制作思路。</p>
+                <p>
+                    <a href="https://sanmq.github.io/loopview/index.html">轮播图链接（可能还有些bug，待优化）</a>
+                    <pre>
+                        1、确定轮播图片大小，设置播放容器，容器设置溢出隐藏，并且设置为定位元素。
+                        2、在播放容器内设置轮播画布，横向拼接轮播图片，如果要制作左右无缝轮播，需要首尾各多拼接尾首图片。
+                        （以下无缝轮播图）
+                        3、设置播放画布为绝对定位元素，再设置每移动一张图片的移动定时器，
+                        4、移动定时器接受移动目标位置，根据缓冲运动方案生成运动方式。
+                        5、如果运动目标超出首尾边界，则判断是将元素位置移动回首尾位置。
+                        6、当运动至目标的时候清除该定时器
+                        7、设置自动播放定时器，每次默认向右移动一张图片
+                        8、可根据需求设置一些事件。如：鼠标进入轮播图后停止自动播放；可以设置左右键
+                        在点击是手动移动一张图片，等等。
+                    </pre>
+                </p>
             </li>
         </ol>
     </section>
+
+
+    <script>
+        function getDom(str) {
+            let s = str.trim()
+            if (s) {
+                let ele = null,
+                    elements = [document.body];
+                let target = [];
+                while (elements.length) {
+                    ele = elements.shift()
+                    if (ele.children.length) {
+                        for (let i = 0; i < ele.children.length; i++) {
+                            elements.push(ele.children[i]);
+                        }
+                    };
+                    // 如果开头有.
+                    if (/^\./.test(s)) {
+                        if (ele.className.trim()) {
+                            let temp = ele.className.trim().replace(/\s+/g, " ").split(" ");
+                            for (let j = 0; j < temp.length; j++) {
+                                if (temp[j] === s.replace(".", "")) {
+                                    target.push(ele);
+                                }
+                            }
+                        }
+                    } else if (/^#/.test(s)) {
+                        if (ele.id === s.replace("#", "")) {
+                            return ele;
+                        }
+                    } else if (/^[A-z]/.test(s)) {
+                        if (ele.tagName == s.toUpperCase()) {
+                            target.push(ele);
+                        }
+                    }
+                }
+                return target
+            } else {
+                return null;
+            }
+        }
+    </script>
+
+    <script>
+        var ground = document.getElementById("ground"),
+            obj = ground.getElementsByTagName("div")[0];
+        obj.onclick = function () {
+            clearInterval(this.timer)
+            let iSpeedX = null,
+                objStyle = getComputedStyle(obj),
+                target = 700,
+                self = this;
+            this.timer = setInterval(function () {
+                let icur = parseInt(objStyle.left);
+                iSpeedX = (target - icur) / 9;
+                self.style.left = icur + iSpeedX + "px";
+                if (iSpeedX < 1) {
+                    self.style.left = target + "px";
+                    clearInterval(self.timer)
+                }
+            }, 30)
+        }
+    </script>
 </body>
 
 </html>
