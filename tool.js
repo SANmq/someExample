@@ -70,7 +70,8 @@ function tableToExcel(table) {
       </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
       </head><body><table>${table.innerHTML}</table></body></html>`;
     //下载模板
-    window.location.href = uri + base64(template)
+    this.href = uri + base64(template)
+    this.download = table.name + '.xlsx'
 }
 //输出base64编码
 function base64(s) { return window.btoa(unescape(encodeURIComponent(s))) }

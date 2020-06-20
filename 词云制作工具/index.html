@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.bootcss.com/lodash.js/4.17.15/lodash.core.min.js"></script>
+    <script src="wordcloud2.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <canvas id="canvas" width="800px" height="600px"></canvas>
+    <div class="side">
+        <textarea name="text" id="text" cols="30" rows="30" style="resize: none;"></textarea>
+        <a id="create" href="javascript:void(0)">生成</a>
+    </div>
+    
+
+    <script>
+
+        var wordFreqData = [['图片生成区域',100]];
+        var options = {
+            "list": wordFreqData,//或者[['各位观众',45],['词云', 21],['来啦!!!',13]],只要格式满足这样都可以
+            "gridSize": 10, // 密集程度 数字越小越密集
+            "weightFactor": 1, // 字体大小=原始大小*weightFactor
+            "maxFontSize": 60, //最大字号
+            "minFontSize": 14, //最小字号
+            "fontWeight": 'normal', //字体粗细
+            "fontFamily": 'Times, serif', // 字体
+            "color": 'random-light', // 字体颜色 'random-dark' 或者 'random-light'
+            "backgroundColor": '#ccc', // 背景颜色
+            "rotateRatio": 0.5 // 字体倾斜(旋转)概率，1代表总是倾斜(旋转)
+        };
+        WordCloud($("#canvas")[0], options);
+
+
+        function Feq(arr) {
+            obj = {}
+            for (let i = 0; i < arr.length; i++) {
+                if (obj.hasOwnProperty(arr[i])) {
+                    obj[arr[i]] += 1;
+                } else {
+                    obj[arr[i]] = 1;
+                }
+            }
+            arr2 = []
+            for (let item in obj) {
+                arr2.push([item, obj[item]])
+            }
+            return arr2
+        }
+
+        $("#create").click(function () {
+            if ($("textarea").val().trim()) {
+                // console.log("可能发送ajax")
+                $.post("http://192.168.0.134:666/api/wordBreak", { "text": $("#text").val() }, function (data) {
+                    console.log(data)
+                    options.list = Feq(data)
+                    WordCloud($("#canvas")[0], options);
+                })
+            }
+        })
+        //生成
+    </script>
+</body>
+
+</html>
